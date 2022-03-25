@@ -14,26 +14,7 @@ namespace Tests
         {
             turn = new Turn();
         }
-        [Test]
-        public void HaveTenPins()
-        {
-            //Given
-
-            //When
-
-            //Then
-            Assert.AreEqual(10, turn.Pins);
-        }
-        [Test]
-        public void HaveTwoThrowsRemaining()
-        {
-            //Given
-
-            //When
-
-            //Then
-            Assert.AreEqual(2,turn.ThrowsRemaining);
-        }
+        
         [Test]
         [TestCase(10, ExpectedResult = 10)]
         [TestCase(9, ExpectedResult = 9)]
@@ -46,14 +27,14 @@ namespace Tests
         [TestCase(2, ExpectedResult = 2)]
         [TestCase(1, ExpectedResult = 1)]
         [TestCase(0, ExpectedResult = 0)]
-        public int ScoreAccordingToThrow(int thrownPins)
+        public int ScoreAccordingToFirstThrow(int thrownPins)
         {
             //Given
 
             //When
             turn.Throw(thrownPins);
             //Then
-            return turn.Score();
+            return turn.PinsThrownOn(0);
 
         }
         [Test]

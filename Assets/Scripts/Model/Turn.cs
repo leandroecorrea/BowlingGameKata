@@ -1,46 +1,78 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Turn 
 {
     private int maxPins = 10;
-    public int ThrowsRemaining { get; private set; }
-    public int Pins { get; private set; }
+    private List<int> thrownPins;
+    private int maxThrows;
+    public bool ExtraThrowsEnabled = true;
     public TurnStatusEnum Status { get; private set; }
+
+    private int throwNumber;
     public Turn()
     {
-        Pins = maxPins;
-        ThrowsRemaining = 2;
         Status = TurnStatusEnum.ONGOING;
+        thrownPins = new List<int>();
+        maxThrows = 2;
+        
+    }
+    public void GainOneBonusThrow()
+    {
+        ExtraThrowsEnabled = false;
+        maxThrows++;
+    }
+    public void GainTwoBonusThrow()
+    {
+        ExtraThrowsEnabled = false;
+        maxThrows+=2;
     }
 
-    public void Throw(int thrownPins)
+    public void Throw(int pinsAmount)
     {
-        ThrowsRemaining--;
-        Pins -= thrownPins;
+        thrownPins.Add(pinsAmount);
         RecalculateTurnStatus();
+
     }
     private void RecalculateTurnStatus()
     {
-        if (Pins == 0 && ThrowsRemaining == 0)
+        if (!ExtraThrowsEnabled)
+        {
+            return;
+        }
+        int pinsThrown = TotalPinsThrown();
+        
+        if (pinsThrown == maxPins && (thrownPins.Count == 2))
         {
             Status = TurnStatusEnum.SPARE;
         }
-        else if (Pins == 0 && ThrowsRemaining > 0)
+        else if (pinsThrown == maxPins && thrownPins.Count == 1)
         {
+            maxThrows--;
             Status=TurnStatusEnum.STRIKE;
         }
-        else if (Pins > 0 && ThrowsRemaining == 0)
+        else if (thrownPins.Count == 2)
         {
             Status=TurnStatusEnum.NORMAL;
         }
+        
     }
 
-    public int Score()
+    public int TotalPinsThrown()
     {
-        return maxPins - Pins;
+        return thrownPins.Aggregate(0, (accum, current) => accum + current);
+    }
+
+    public int PinsThrownOn(int throwIndex)
+    {
+        return thrownPins[throwIndex];
+    }
+    public bool HasMoreThrows()
+    {
+        return thrownPins.Count < maxThrows;
     }
 
 }
