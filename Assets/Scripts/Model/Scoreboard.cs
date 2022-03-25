@@ -23,26 +23,15 @@ public class Scoreboard
         {
             return turn.TotalPinsThrown();
         }
-        else if (turn.Status == TurnStatusEnum.SPARE)
-        {
-            if (IsLastTurnOfPlayer(turnIndex, player))
-            {
-                return turn.TotalPinsThrown();
-            }
-            else
-            {
-                return turn.TotalPinsThrown() + player.Turns[turnIndex+1].PinsThrownOn(0);
-            }
-        }
-        //Es strike
-        if ()
+        else if (IsLastTurnOfPlayer(turnIndex, player))
         {
             return turn.TotalPinsThrown();
         }
-        else
+        else if (turn.Status == TurnStatusEnum.SPARE)
         {
-            return turn.TotalPinsThrown() + player.Turns[turnIndex+1].TotalPinsThrown();
+            return turn.TotalPinsThrown() + player.Turns[turnIndex+1].PinsThrownOn(0);
         }
+        return turn.TotalPinsThrown() + player.Turns[turnIndex+1].TotalPinsThrown();
     }
 
     private static bool IsLastTurnOfPlayer(int turnIndex, BowlingPlayer player)
@@ -50,8 +39,5 @@ public class Scoreboard
         return turnIndex == player.totalTurns-1;
     }
 
-    private bool IsPlayerLastTurn(BowlingPlayer player, int turnIndex)
-    {
-        return turnIndex == player.totalTurns-1;
-    }
+
 }

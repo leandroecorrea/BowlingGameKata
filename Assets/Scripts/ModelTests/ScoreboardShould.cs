@@ -110,6 +110,7 @@ namespace Tests
             bowlingPlayer.Throw(5);
             bowlingPlayer.Throw(5);
 
+
             // Then
             var result = bowlingPlayer.Turns[9].Status;
             Assert.AreEqual(TurnStatusEnum.STRIKE, result);
