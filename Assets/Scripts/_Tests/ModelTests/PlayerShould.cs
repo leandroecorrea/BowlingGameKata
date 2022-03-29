@@ -19,5 +19,6 @@ namespace Tests
             //Then
             Assert.AreEqual(10, p.Turns.Length);
         }
+        
     }
 }
