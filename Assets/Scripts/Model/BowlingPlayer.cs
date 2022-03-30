@@ -6,12 +6,12 @@ public class BowlingPlayer : IBowlingPlayer
 {
     public string Name { get; }
     public Turn[] Turns { get; set; }
-    public readonly int totalTurns = 10;
+    public static int TOTAL_TURNS = 10;
     public BowlingPlayer(string name)
     {
         this.Name=name;
-        Turns = new Turn[totalTurns];
-        for (int i = 0; i < totalTurns; i++)
+        Turns = new Turn[TOTAL_TURNS];
+        for (int i = 0; i < TOTAL_TURNS; i++)
         {
             Turns[i] = new Turn();
         }
@@ -24,11 +24,11 @@ public class BowlingPlayer : IBowlingPlayer
             if (turn.HasMoreThrows())
             {
                 turn.Throw(pinsThrown);
-                if (turn.Status == TurnStatusEnum.SPARE && turn.ExtraThrowsEnabled && turn == Turns[totalTurns-1])
+                if (turn.Status == TurnStatusEnum.SPARE && turn.ExtraThrowsEnabled && turn == Turns[TOTAL_TURNS-1])
                 {
                     turn.GainOneBonusThrow();
                 }
-                else if (turn.Status == TurnStatusEnum.STRIKE && turn.ExtraThrowsEnabled && turn == Turns[totalTurns-1])
+                else if (turn.Status == TurnStatusEnum.STRIKE && turn.ExtraThrowsEnabled && turn == Turns[TOTAL_TURNS-1])
                 {
                     turn.GainTwoBonusThrow();
                 }

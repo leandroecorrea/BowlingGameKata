@@ -3,28 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InGameView : MonoBehaviour
+public class InGameView : MonoBehaviour, IInGameView
 {
     public GameObject PlayerOneScore;
     public GameObject PlayerTwoScore;
+    private BowlingGamePresenter _bowlingGamePresenter;
     // Start is called before the first frame update
     void Start()
     {
-        transform.GetComponentInChildren<Button>().onClick.AddListener(Log);
-
-        InitScoreBoardsView();
-        
+        _bowlingGamePresenter = BowlingGamePresenterBuilder.Build(this);        
+        transform.GetComponentInChildren<Button>().onClick.AddListener(Log);        
     }
 
-    void InitScoreBoardsView()
+    public void InitScoreBoardsView(string playerOneName, string playerTwoName)
     {
-        InitScoreBoard(PlayerOneScore);
-        InitScoreBoard(PlayerTwoScore);
+        InitScoreBoard(PlayerOneScore, playerOneName);
+        InitScoreBoard(PlayerTwoScore, playerTwoName);
     }
-    void InitScoreBoard(GameObject playerScore)
+    void InitScoreBoard(GameObject playerScore, string playerName)
     {
         foreach (Transform child in playerScore.transform)
         {
+            if(child.name == "PlayerText")
+            {
+                child.GetComponent<Text>().text = playerName;
+            }
             if (child.name.Contains("TurnScoreContainer"))
             {
                 GameObject firstThrow = child.GetChild(0).transform.GetChild(0).gameObject;
@@ -44,3 +47,4 @@ public class InGameView : MonoBehaviour
 
     }
 }
+

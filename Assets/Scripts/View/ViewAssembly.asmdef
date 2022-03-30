@@ -1,0 +1,15 @@
+{
+    "name": "ViewAssembly",
+    "references": [
+        "GUID:fc9a6d5b4c3628c4daadfe4c69e59481"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

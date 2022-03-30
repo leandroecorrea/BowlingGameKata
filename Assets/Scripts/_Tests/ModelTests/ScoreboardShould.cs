@@ -14,12 +14,10 @@ namespace Tests
         [SetUp]
         public void SetUp()
         {
-            scoreboard = new Scoreboard();
             playerOne = new BowlingPlayer("German");
             playerTwo = new BowlingPlayer("Leandro");
-            scoreboard.AddPlayer(playerOne);
-            scoreboard.AddPlayer(playerTwo);
-
+            IBowlingPlayer[] players = new IBowlingPlayer[] { playerOne, playerTwo };
+            scoreboard = new Scoreboard(players);
         }
         [Test]
         public void ScoreboardShouldHaveTwoPlayers()
@@ -35,7 +33,7 @@ namespace Tests
         public int ScoreNormal(int firstThrowPinsAmount, int secondThrowPinsAmount)
         {
             // Given
-            BowlingPlayer bowlingPlayer = scoreboard.Players[0];
+            IBowlingPlayer bowlingPlayer = scoreboard.Players[0];
 
             // When
             bowlingPlayer.Throw(firstThrowPinsAmount);
@@ -51,7 +49,7 @@ namespace Tests
         public void ScoreWhenSpare()
         {
             // Given
-            BowlingPlayer bowlingPlayer = scoreboard.Players[0];
+            IBowlingPlayer bowlingPlayer = scoreboard.Players[0];
 
             //When
             bowlingPlayer.Throw(0);
@@ -69,7 +67,7 @@ namespace Tests
         public void ScoreWhenStrike()
         {
             // Given
-            BowlingPlayer bowlingPlayer = scoreboard.Players[0];
+            IBowlingPlayer bowlingPlayer = scoreboard.Players[0];
 
             //When
             bowlingPlayer.Throw(10);
@@ -85,7 +83,7 @@ namespace Tests
         public void GiveExtraThrowOnSpareLastTurn()
         {
             // Given
-            BowlingPlayer bowlingPlayer = scoreboard.Players[0];
+            IBowlingPlayer bowlingPlayer = scoreboard.Players[0];
 
             //When
             NineDummyShotsFor(bowlingPlayer);
@@ -102,7 +100,7 @@ namespace Tests
         public void GiveTwoExtraThrowOnStrikeLastTurn()
         {
             // Given
-            BowlingPlayer bowlingPlayer = scoreboard.Players[0];
+            IBowlingPlayer bowlingPlayer = scoreboard.Players[0];
 
             //When
             NineDummyShotsFor(bowlingPlayer);
@@ -116,7 +114,7 @@ namespace Tests
             Assert.AreEqual(TurnStatusEnum.STRIKE, result);
             Assert.AreEqual(20, scoreboard.ScoreForTurn(bowlingPlayer, 9));
         }
-        private void NineDummyShotsFor(BowlingPlayer player)
+        private void NineDummyShotsFor(IBowlingPlayer player)
         {
             for(int i = 0; i < 9; i++)
             {

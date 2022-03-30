@@ -3,21 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Scoreboard
+public class Scoreboard : IScoreboard
 {
-    public List<BowlingPlayer> Players { get; private set; }
+    public List<IBowlingPlayer> Players { get; private set; }
 
-    public Scoreboard()
+    public Scoreboard(IBowlingPlayer[] players)
     {
-        Players = new List<BowlingPlayer>();
+        Players = new List<IBowlingPlayer>();
+        for(int i = 0; i < players.Length; i++)
+        {
+            Players.Add(players[i]);
+        }
+
     }
-    public void AddPlayer(BowlingPlayer player)
+    public void AddPlayer(IBowlingPlayer player)
     {
         Players.Add(player);
     }
-    public int ScoreForTurn(BowlingPlayer selectedPlayer, int turnIndex)
+    public int ScoreForTurn(IBowlingPlayer selectedPlayer, int turnIndex)
     {
-        BowlingPlayer player = Players.Find(p => p == selectedPlayer);
+        IBowlingPlayer player = Players.Find(p => p == selectedPlayer);
         var turn = player.Turns[turnIndex];
         if (turn.Status == TurnStatusEnum.NORMAL)
         {
@@ -34,9 +39,9 @@ public class Scoreboard
         return turn.TotalPinsThrown() + player.Turns[turnIndex+1].TotalPinsThrown();
     }
 
-    private static bool IsLastTurnOfPlayer(int turnIndex, BowlingPlayer player)
+    private static bool IsLastTurnOfPlayer(int turnIndex, IBowlingPlayer player)
     {
-        return turnIndex == player.totalTurns-1;
+        return turnIndex == BowlingPlayer.TOTAL_TURNS-1;
     }
 
 
