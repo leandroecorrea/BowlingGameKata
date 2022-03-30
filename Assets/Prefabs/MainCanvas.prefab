@@ -692,6 +692,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerOneScore: {fileID: 8751191548167993193}
   PlayerTwoScore: {fileID: 8751191548131364287}
+  InputField: {fileID: 8751191547584138108}
 --- !u!1 &8751191546615707543
 GameObject:
   m_ObjectHideFlags: 0

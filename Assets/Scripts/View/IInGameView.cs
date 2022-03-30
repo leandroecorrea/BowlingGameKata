@@ -5,4 +5,5 @@ using UnityEngine;
 public interface IInGameView 
 {
     void InitScoreBoardsView(string playerOneName, string playerTwoName);
+    void UpdateScoreboard();
 }

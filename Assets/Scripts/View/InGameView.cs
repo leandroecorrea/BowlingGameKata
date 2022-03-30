@@ -5,14 +5,19 @@ using UnityEngine.UI;
 
 public class InGameView : MonoBehaviour, IInGameView
 {
-    public GameObject PlayerOneScore;
-    public GameObject PlayerTwoScore;
+    [SerializeField]
+    private GameObject PlayerOneScore;
+    [SerializeField]
+    private GameObject PlayerTwoScore;
+    [SerializeField]
+    private GameObject InputField;
+
     private BowlingGamePresenter _bowlingGamePresenter;
     // Start is called before the first frame update
     void Start()
     {
         _bowlingGamePresenter = BowlingGamePresenterBuilder.Build(this);        
-        transform.GetComponentInChildren<Button>().onClick.AddListener(Log);        
+        transform.GetComponentInChildren<Button>().onClick.AddListener(OnReceiveThrow);        
     }
 
     public void InitScoreBoardsView(string playerOneName, string playerTwoName)
@@ -39,12 +44,24 @@ public class InGameView : MonoBehaviour, IInGameView
             }
         }
     }
-    void Log()
+    void OnReceiveThrow()
     {
+        int pinsAmount;
+        if (int.TryParse(InputField.GetComponent<Text>().text, out pinsAmount))
+        {
+            _bowlingGamePresenter.ReceiveThrow(pinsAmount);
+        }
+        else
+        {
+            //Manejate...en el frontend
+        }
 
-        Debug.Log("throw!");
+
+    }
+
+    public void UpdateScoreboard()
+    {
         
-
     }
 }
 

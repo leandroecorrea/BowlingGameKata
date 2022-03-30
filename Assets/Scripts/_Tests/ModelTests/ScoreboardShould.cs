@@ -121,6 +121,6 @@ namespace Tests
                 player.Throw(10);
             }
         }
-
+        
     }
 }

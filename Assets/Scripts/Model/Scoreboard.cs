@@ -6,7 +6,7 @@ using UnityEngine;
 public class Scoreboard : IScoreboard
 {
     public List<IBowlingPlayer> Players { get; private set; }
-
+    
     public Scoreboard(IBowlingPlayer[] players)
     {
         Players = new List<IBowlingPlayer>();
@@ -14,7 +14,7 @@ public class Scoreboard : IScoreboard
         {
             Players.Add(players[i]);
         }
-
+        
     }
     public void AddPlayer(IBowlingPlayer player)
     {

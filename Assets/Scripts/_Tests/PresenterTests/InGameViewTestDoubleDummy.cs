@@ -8,4 +8,9 @@ public class InGameViewTestDoubleDummy : IInGameView
     {
         
     }
+
+    public void UpdateScoreboard()
+    {
+        
+    }
 }

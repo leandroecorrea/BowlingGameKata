@@ -7,8 +7,11 @@ public class BowlingPlayer : IBowlingPlayer
     public string Name { get; }
     public Turn[] Turns { get; set; }
     public static int TOTAL_TURNS = 10;
+    private List<IPlayerObserver> _observers;
+
     public BowlingPlayer(string name)
     {
+        _observers = new List<IPlayerObserver>();
         this.Name=name;
         Turns = new Turn[TOTAL_TURNS];
         for (int i = 0; i < TOTAL_TURNS; i++)
@@ -24,6 +27,13 @@ public class BowlingPlayer : IBowlingPlayer
             if (turn.HasMoreThrows())
             {
                 turn.Throw(pinsThrown);
+                if (turn.Status!=TurnStatusEnum.ONGOING)
+                {
+                    foreach (IPlayerObserver observer in _observers)
+                    {
+                        observer.SwitchPlayerTurn(this);
+                    }
+                }
                 if (turn.Status == TurnStatusEnum.SPARE && turn.ExtraThrowsEnabled && turn == Turns[TOTAL_TURNS-1])
                 {
                     turn.GainOneBonusThrow();
@@ -37,4 +47,8 @@ public class BowlingPlayer : IBowlingPlayer
         }
     }
 
+    public void Attach(IPlayerObserver observer)
+    {
+        _observers.Add(observer);
+    }
 }

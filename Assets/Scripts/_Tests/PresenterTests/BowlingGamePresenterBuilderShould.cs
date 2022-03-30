@@ -8,21 +8,24 @@ namespace Tests
 {
     public class BowlingGamePresenterBuilderShould
     {
-
+        IInGameView _view;
+        BowlingGamePresenter _presenter;
+        [SetUp]
+        public void SetUp()
+        {
+            _view = new InGameViewTestDoubleDummy();
+            _presenter = BowlingGamePresenterBuilder.Build(_view);
+        }
         [Test]
         public void CreateApresenterWithAscoreboard()
-        {            
-            IInGameView view = new InGameViewTestDoubleDummy();
-            BowlingGamePresenter bowlingGamePresenter = BowlingGamePresenterBuilder.Build(view);            
-            Assert.AreNotEqual(bowlingGamePresenter.Scoreboard, null);
+        {   
+            Assert.AreNotEqual(_presenter.Scoreboard, null);
         }
 
         [Test]
         public void CreateApresenterWithAview()
-        {
-            IInGameView view = new InGameViewTestDoubleDummy();
-            BowlingGamePresenter bowlingGamePresenter = BowlingGamePresenterBuilder.Build(view);
-            Assert.AreNotEqual(bowlingGamePresenter.GameView, null);
-        }
+        {            
+            Assert.AreNotEqual(_presenter.GameView, null);
+        }        
     }
 }
