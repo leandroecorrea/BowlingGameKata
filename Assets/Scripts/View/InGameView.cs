@@ -86,7 +86,6 @@ public class InGameView : MonoBehaviour, IInGameView
         if (int.TryParse(pinsKnockedInputValue, out pinsAmount)&&pinsAmount>=0)
         {
             _bowlingGamePresenter.ReceiveThrow(pinsAmount);
-            Debug.Log(pinsAmount);
         }
         else
         {
