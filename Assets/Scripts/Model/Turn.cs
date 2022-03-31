@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Turn 
 {
-    private int maxPins = 10;
+    public static int MAX_PINS = 10;
     private List<int> thrownPins;
     private int maxThrows;
     public bool ExtraThrowsEnabled = true;
@@ -49,11 +49,11 @@ public class Turn
         }
         int pinsThrown = TotalPinsThrown();
         
-        if (pinsThrown == maxPins && (thrownPins.Count == 2))
+        if (pinsThrown == MAX_PINS && (thrownPins.Count == 2))
         {
             Status = TurnStatusEnum.SPARE;
         }
-        else if (pinsThrown == maxPins && thrownPins.Count == 1)
+        else if (pinsThrown == MAX_PINS && thrownPins.Count == 1)
         {
             maxThrows--;
             Status=TurnStatusEnum.STRIKE;
