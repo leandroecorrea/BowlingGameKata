@@ -549,7 +549,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Lenadro won!
+  m_Text: Game ended.
 --- !u!222 &1748264343
 CanvasRenderer:
   m_ObjectHideFlags: 0
