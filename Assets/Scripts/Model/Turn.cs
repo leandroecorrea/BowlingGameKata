@@ -15,7 +15,7 @@ public class Turn
     private int throwNumber;
     public Turn()
     {
-        Status = TurnStatusEnum.ONGOING;
+        Status = TurnStatusEnum.STANDBY;
         thrownPins = new List<int>();
         maxThrows = 2;
         
@@ -42,6 +42,10 @@ public class Turn
         if (!ExtraThrowsEnabled)
         {
             return;
+        }
+        if(Status == TurnStatusEnum.STANDBY)
+        {
+            Status = TurnStatusEnum.ONGOING;
         }
         int pinsThrown = TotalPinsThrown();
         

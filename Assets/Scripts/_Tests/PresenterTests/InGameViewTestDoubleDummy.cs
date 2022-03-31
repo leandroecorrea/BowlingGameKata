@@ -38,7 +38,7 @@ public class InGameViewTestDoubleDummy : IInGameView
 
     public void ShowWinningPlayer(string playerName)
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public List<TurnViewDetail[]> TurnsDetailViewList()

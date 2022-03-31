@@ -4,5 +4,5 @@ using UnityEngine;
 
 public enum TurnStatusEnum 
 {
-    NORMAL, SPARE, STRIKE, ONGOING
+    NORMAL, SPARE, STRIKE, ONGOING, STANDBY
 }
