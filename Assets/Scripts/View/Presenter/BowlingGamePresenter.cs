@@ -48,41 +48,7 @@ public class BowlingGamePresenter : IPlayerObserver
 
     public void ReceiveThrow(int pinsAmount)
     {
-        //Turn playerCurrentTurn = CurrentPlayer.CurrentTurn();
         CurrentPlayer.Throw(pinsAmount);
-
-        // pinsAmount = 9
-        // string[] throwResult = {"9"}
-        //pinsAmount = 10
-        // string[] throwResult = {"", "X"}
-        /*List<string> throwResult = new List<string>();
-        switch (playerCurrentTurn.Status)
-        {
-            case TurnStatusEnum.ONGOING:
-                int throwAmount = playerCurrentTurn.PinsThrownOn(0);
-                if (CurrentPlayer.PreviousTurn()!=null&&CurrentPlayer.PreviousTurn().Status == TurnStatusEnum.SPARE)
-                {
-                    throwResult.Add((10+throwAmount).ToString());
-                }
-                throwResult.Add(throwAmount.ToString());
-                break;
-            case TurnStatusEnum.NORMAL:
-                if (CurrentPlayer.PreviousTurn()!=null&&CurrentPlayer.PreviousTurn().Status == TurnStatusEnum.STRIKE)
-                {
-                    throwResult.Add((10+CurrentPlayer.PreviousTurn().TotalPinsThrown()).ToString());
-                }
-                throwResult.Add(playerCurrentTurn.PinsThrownOn(1).ToString());
-                throwResult.Add(playerCurrentTurn.TotalPinsThrown().ToString());
-                break;
-            case TurnStatusEnum.SPARE:
-                throwResult.Add("-");
-                break;
-            case TurnStatusEnum.STRIKE:
-                throwResult.Add("");
-                throwResult.Add("X");
-                break;
-        }*/
-       // _gameView.UpdateScoreboard(currentPlayerIndex, throwResult.ToArray());
         List<Turn> currentPlayerTurns = new List<Turn>();
         foreach(Turn turn in CurrentPlayer.Turns)
         {
