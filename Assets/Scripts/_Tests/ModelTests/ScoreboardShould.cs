@@ -92,7 +92,7 @@ namespace Tests
             bowlingPlayer.Throw(2);
 
             // Then
-            var result = bowlingPlayer.Turns[9].Status;
+            var result = bowlingPlayer.Turns[Turn.LAST_TURN_INDEX].Status;
             Assert.AreEqual(TurnStatusEnum.SPARE, result);
             Assert.AreEqual(12, scoreboard.ScoreForTurn(bowlingPlayer, 9));
         }
@@ -110,7 +110,7 @@ namespace Tests
 
 
             // Then
-            var result = bowlingPlayer.Turns[9].Status;
+            var result = bowlingPlayer.Turns[Turn.LAST_TURN_INDEX].Status;
             Assert.AreEqual(TurnStatusEnum.STRIKE, result);
             Assert.AreEqual(20, scoreboard.ScoreForTurn(bowlingPlayer, 9));
         }

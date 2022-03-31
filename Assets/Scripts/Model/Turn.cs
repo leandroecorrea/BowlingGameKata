@@ -7,6 +7,7 @@ using UnityEngine;
 public class Turn 
 {
     public static int MAX_PINS = 10;
+    public static int LAST_TURN_INDEX = 9;
     private List<int> thrownPins;
     private int maxThrows;
     public bool ExtraThrowsEnabled = true;
@@ -77,6 +78,10 @@ public class Turn
     public bool HasMoreThrows()
     {
         return thrownPins.Count < maxThrows;
+    }
+    public List<int> GetEveryThrowMade()
+    {
+        return thrownPins;
     }
 
 }
