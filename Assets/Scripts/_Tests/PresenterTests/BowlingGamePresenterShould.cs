@@ -34,6 +34,63 @@ namespace Tests
         }
 
         [Test]
+        [TestCase(9)]
+        [TestCase(0)]
+        [TestCase(5)]
+        public void NotSwitchPlayersAfterOneThrow(int pinsAmount)
+        {
+            // Given
+            var previousPlayer = _presenter.CurrentPlayer.Name;
+            // When
+            _presenter.ReceiveThrow(pinsAmount);
+            //Then
+            Assert.AreEqual(previousPlayer, _presenter.CurrentPlayer.Name);
+        }
+
+        [Test]        
+        [TestCase(1, 1)]
+        [TestCase(0, 0)]
+        [TestCase(0, 10)]
+        [TestCase(5, 5)]
+        public void SwitchPlayersAfterTwoThrows(int firstThrow, int secondThrow)
+        {
+            // Given
+            var previousPlayer = _presenter.CurrentPlayer.Name;
+            // When
+            _presenter.ReceiveThrow(firstThrow);
+            _presenter.ReceiveThrow(secondThrow);
+            //Then
+            Assert.AreNotEqual(previousPlayer, _presenter.CurrentPlayer.Name);
+        }
+
+        [Test]
+        [TestCase(0, 11)]
+        public void ShouldNotAllowToThrowMorePinsThanRemaining(int firstThrow, int secondThrow)
+        {
+            // When
+            var currentPlayer = _presenter.CurrentPlayer.Name;
+            _presenter.ReceiveThrow(firstThrow);
+            _presenter.ReceiveThrow(secondThrow);
+
+            // Then
+            Assert.AreEqual(currentPlayer, _presenter.CurrentPlayer.Name);
+        }
+
+
+        [Test]
+        [TestCase(0, 11)]
+        public void ShouldShowErrorMessageWhenTriedToThrowMorePinsThanRemaining(int firstThrow, int secondThrow)
+        {
+            // When
+            var currentPlayer = _presenter.CurrentPlayer.Name;
+            _presenter.ReceiveThrow(firstThrow);
+            _presenter.ReceiveThrow(secondThrow);
+
+            // Then
+            _gameView.Verify(v => v.ShowErrorMessage(currentPlayer));            
+        }
+
+        [Test]
         public void BePlayersOneTurn()
         {
             var result = _presenter.CurrentPlayer;

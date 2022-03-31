@@ -8,10 +8,9 @@ using Moq;
 namespace Tests
 {
     public class BowlingGamePresenterBuilderShould
-    {        
+    {
         BowlingGamePresenter _presenter;
         Mock<IInGameView> _view;
-
 
         [SetUp]
         public void SetUp()
@@ -21,14 +20,14 @@ namespace Tests
         }
         [Test]
         public void CreateApresenterWithAscoreboard()
-        {   
+        {
             Assert.AreNotEqual(_presenter.Scoreboard, null);
         }
 
         [Test]
         public void CreateApresenterWithAview()
-        {            
+        {
             Assert.AreNotEqual(_presenter.GameView, null);
-        }        
+        }
     }
 }

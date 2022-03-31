@@ -21,6 +21,11 @@ public class BowlingGamePresenter : IPlayerObserver
         _gameView = view;
         _gameView.InitScoreBoardsView(_scoreboard.Players[0].Name, _scoreboard.Players[1].Name);
         SubscribeToPlayers();
+        InitializeCurrentPlayer();
+    }
+
+    private void InitializeCurrentPlayer()
+    {
         currentPlayerIndex = 0;
         nextPlayerIndex = 0;
         CurrentPlayer = _scoreboard.Players[currentPlayerIndex];
@@ -48,8 +53,36 @@ public class BowlingGamePresenter : IPlayerObserver
 
     public void ReceiveThrow(int pinsAmount)
     {
-        CurrentPlayer.Throw(pinsAmount);
-        List<Turn> turnsToBeRendered = new List<Turn>();
+        if(CheckPinsAmount(pinsAmount))
+        {
+            CurrentPlayer.Throw(pinsAmount);
+            RenderTurnsInView();
+            CheckIfGameShouldContinue();
+        }
+        else
+        {
+            _gameView.ShowErrorMessage(CurrentPlayer.Name);            
+        }
+    }
+
+    private void CheckIfGameShouldContinue()
+    {
+        if (GameEnded())
+        {
+            string results = GameEndedResultMessage();
+            _gameView.ShowWinningPlayer(results);
+            _gameView.DisableThrows();
+            _gameView.GameEnded();
+        }
+        else
+        {
+            UpdatePlayerForNextTurn();
+        }
+    }
+
+    private void RenderTurnsInView()
+    {
+        List<Turn> turnsToBeRendered = new List<Turn>();        
         foreach (Turn turn in CurrentPlayer.Turns)
         {
             if (turn.Status != TurnStatusEnum.STANDBY)
@@ -85,7 +118,6 @@ public class BowlingGamePresenter : IPlayerObserver
                         Turn nextTurn = turnsToBeRendered[turnIndex + 1];
                         accumulatedScore += (nextTurn.PinsThrownOn(0) + 10);
                         turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
-
                     }
                     break;
                 case TurnStatusEnum.STRIKE:
@@ -121,32 +153,36 @@ public class BowlingGamePresenter : IPlayerObserver
         }
         _gameView.SetFinalScoreForPlayer(currentPlayerIndex, accumulatedScore);
         playersScore[currentPlayerIndex] = accumulatedScore;
-        if (currentPlayerIndex == 1 && !CurrentPlayer.Turns[9].HasMoreThrows())
+    }
+
+    private string GameEndedResultMessage()
+    {        
+        if (playersScore[0] == playersScore[1])
         {
-            string winnerPlayersName;
-            if (playersScore[0] == playersScore[1])
-            {
-                winnerPlayersName = "It's a tie!";
-            }
-            else
-            {
-                if (playersScore[0] > playersScore[1])
-                {
-                    winnerPlayersName = _scoreboard.Players[0].Name + " won!";
-                }
-                else
-                {
-                    winnerPlayersName = _scoreboard.Players[1].Name + " won!";
-                }
-            }
-            _gameView.ShowWinningPlayer(winnerPlayersName);
-            _gameView.DisableThrows();
-            _gameView.GameEnded();
+            return "It's a tie!";
         }
         else
         {
-            UpdatePlayerForNextTurn();
+            if (playersScore[0] > playersScore[1])
+            {
+                return _scoreboard.Players[0].Name + " won!";
+            }
+            else
+            {
+                return _scoreboard.Players[1].Name + " won!";
+            }
         }
+    }
+
+    private bool GameEnded()
+    {
+        return currentPlayerIndex == 1 && !CurrentPlayer.Turns[9].HasMoreThrows();
+    }
+
+    private bool CheckPinsAmount(int pinsAmount)
+    {
+        int pinsRemaining = Turn.MAX_PINS - CurrentPlayer.CurrentTurn().TotalPinsThrown();
+        return pinsAmount <= pinsRemaining && pinsAmount <= Turn.MAX_PINS && pinsAmount >= 0;
     }
 
     private void UpdatePlayerForNextTurn()

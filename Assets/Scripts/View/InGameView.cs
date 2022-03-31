@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -100,9 +101,6 @@ public class InGameView : MonoBehaviour, IInGameView
         PlayerTurnName.GetComponent<Text>().text = playerName+"'s turn.";
     }
 
-    
-    
-
     public List<TurnViewDetail[]> TurnsDetailViewList()
     {
         return turnsDetailViewList;
@@ -136,6 +134,26 @@ public class InGameView : MonoBehaviour, IInGameView
     public void ShowWinningPlayer(string playerName)
     {
         PlayerTurnName.GetComponent<Text>().text = playerName;
+    }
+
+    public void ShowErrorMessage(string playerName)
+    {
+        StartCoroutine(FlashError(playerName));        
+    }
+
+    private IEnumerator FlashError(string playerName)
+    {        
+        DisableThrows();
+        PlayerTurnName.GetComponent<Text>().text = "Can't throw that!";
+        yield return new WaitForSeconds(1);
+        EnableThrows();
+        UpdatePlayerTurnName(playerName);
+    }
+
+    private void EnableThrows()
+    {
+        InputField.SetActive(true);
+        ThrowButton.SetActive(true);
     }
 }
 

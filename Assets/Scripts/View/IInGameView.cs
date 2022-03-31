@@ -18,4 +18,5 @@ public interface IInGameView
     void DisableThrows();
     
     void ShowWinningPlayer(string playerName);
+    void ShowErrorMessage(string playerName);
 }
