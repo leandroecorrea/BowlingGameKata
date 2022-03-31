@@ -110,6 +110,7 @@ namespace Tests
             //Then            
             _gameView.Verify(v => v.UpdatePlayerTurnName("German"));
         }
+
         [Test]
         public void UpdatePlayersNameAfterTwoTurnsWithFirstPlayer()
         {
