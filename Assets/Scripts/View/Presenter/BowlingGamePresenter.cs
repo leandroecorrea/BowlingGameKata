@@ -142,6 +142,7 @@ public class BowlingGamePresenter : IPlayerObserver
                     {
                         throwValue = turn.PinsThrownOn(2).ToString();
                     }
+
                     turnViewDetail.ThirdThrow.GetComponentInChildren<Text>().text = throwValue;
                     turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
                 }
@@ -203,12 +204,7 @@ public class BowlingGamePresenter : IPlayerObserver
                         break;
                 }
             }
-            if (!turn.ExtraThrowsEnabled && !turn.HasMoreThrows())
-            {
-                turnViewDetail.ThirdThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(2).ToString();
-                accumulatedScore += turn.TotalPinsThrown();
-                turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
-            }
+            
         }
         _gameView.SetFinalScoreForPlayer(currentPlayerIndex, accumulatedScore);
         playersScore[currentPlayerIndex] = accumulatedScore;
