@@ -134,7 +134,7 @@ public class BowlingGamePresenter : IPlayerObserver
                     {
                         throwValue = "X";
                     }
-                    else if (turn.PinsThrownOn(2)+turn.PinsThrownOn(1)==Turn.MAX_PINS)
+                    else if (turn.PinsThrownOn(2)+turn.PinsThrownOn(1)==Turn.MAX_PINS&&turn.PinsThrownOn(0)!=Turn.MAX_PINS&&turn.PinsThrownOn(0)+turn.PinsThrownOn(1)!=Turn.MAX_PINS)
                     {
                         throwValue = "-";
                     }
@@ -241,40 +241,41 @@ public class BowlingGamePresenter : IPlayerObserver
             return false;
         }
         int pinsRemaining = 0;
-        if (CurrentPlayer.Turns[Turn.LAST_TURN_INDEX]== CurrentPlayer.CurrentTurn())
+        Turn playerCurrentTurn = CurrentPlayer.CurrentTurn();
+        if (CurrentPlayer.Turns[Turn.LAST_TURN_INDEX]== playerCurrentTurn)
         {
-            if (CurrentPlayer.CurrentTurn().GetEveryThrowMade().Count==0)
+            if (playerCurrentTurn.GetEveryThrowMade().Count==0)
             {
-                pinsRemaining = Turn.MAX_PINS - CurrentPlayer.CurrentTurn().TotalPinsThrown();
+                pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.TotalPinsThrown();
             }
-            else if (CurrentPlayer.CurrentTurn().GetEveryThrowMade().Count==1)
+            else if (playerCurrentTurn.GetEveryThrowMade().Count==1)
             {
-                if (CurrentPlayer.CurrentTurn().PinsThrownOn(0)==10)
+                if (playerCurrentTurn.PinsThrownOn(0)==10)
                 {
                     pinsRemaining = Turn.MAX_PINS;
                 }
                 else
                 {
-                    pinsRemaining = Turn.MAX_PINS - CurrentPlayer.CurrentTurn().TotalPinsThrown();
+                    pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.TotalPinsThrown();
                 }
             }
-            else if (CurrentPlayer.CurrentTurn().GetEveryThrowMade().Count==2)
+            else if (playerCurrentTurn.GetEveryThrowMade().Count==2)
             {
-                if (CurrentPlayer.CurrentTurn().PinsThrownOn(0)==Turn.MAX_PINS||CurrentPlayer.CurrentTurn().PinsThrownOn(0)+CurrentPlayer.CurrentTurn().PinsThrownOn(1)==Turn.MAX_PINS)
+                if (playerCurrentTurn.PinsThrownOn(1)==Turn.MAX_PINS||playerCurrentTurn.PinsThrownOn(0)+playerCurrentTurn.PinsThrownOn(1)==Turn.MAX_PINS)
                 {
                     pinsRemaining = Turn.MAX_PINS;
                 }
                 else
                 {
-                    pinsRemaining = Turn.MAX_PINS - (CurrentPlayer.CurrentTurn().PinsThrownOn(0)+CurrentPlayer.CurrentTurn().PinsThrownOn(1));
+                    pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.PinsThrownOn(1);
                 }
             }
         }
         else
         {
-            pinsRemaining = Turn.MAX_PINS - CurrentPlayer.CurrentTurn().TotalPinsThrown();
+            pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.TotalPinsThrown();
         }
-        return pinsAmount <= pinsRemaining && pinsAmount <= Turn.MAX_PINS && pinsAmount >= 0;
+        return pinsAmount <= pinsRemaining && pinsAmount <= Turn.MAX_PINS;
     }
 
     private void UpdatePlayerForNextTurn()
