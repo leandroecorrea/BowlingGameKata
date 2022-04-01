@@ -7,5 +7,5 @@
 
     Turn CurrentTurn();
     Turn PreviousTurn();
-
+    bool IsLastTurn();
 }

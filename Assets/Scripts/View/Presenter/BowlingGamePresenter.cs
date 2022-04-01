@@ -80,20 +80,25 @@ public class BowlingGamePresenter : IPlayerObserver
         }
     }
 
-    private void RenderTurnsInView()
+    private List<Turn> FindTurnsPlayedSoFar()
     {
-        List<Turn> turnsToBeRendered = new List<Turn>();
+        List<Turn> turnsPlayedSoFar = new List<Turn>();
         foreach (Turn turn in CurrentPlayer.Turns)
         {
             if (turn.Status != TurnStatusEnum.STANDBY)
             {
-                turnsToBeRendered.Add(turn);
+                turnsPlayedSoFar.Add(turn);
             }
             else
             {
                 break;
             }
         }
+        return turnsPlayedSoFar;
+    }
+    private void RenderTurnsInView()
+    {
+        List<Turn> turnsToBeRendered = FindTurnsPlayedSoFar();
         int accumulatedScore = 0;
         for (int turnIndex = 0; turnIndex < turnsToBeRendered.Count; turnIndex++)
         {
@@ -134,7 +139,7 @@ public class BowlingGamePresenter : IPlayerObserver
                     {
                         throwValue = "X";
                     }
-                    else if (turn.PinsThrownOn(2)+turn.PinsThrownOn(1)==Turn.MAX_PINS&&turn.PinsThrownOn(0)!=Turn.MAX_PINS&&turn.PinsThrownOn(0)+turn.PinsThrownOn(1)!=Turn.MAX_PINS)
+                    else if (turn.PinsThrownOn(2)+turn.PinsThrownOn(1)==Turn.MAX_PINS&&turn.PinsThrownOn(0)+turn.PinsThrownOn(1)!=Turn.MAX_PINS)
                     {
                         throwValue = "-";
                     }
@@ -236,46 +241,83 @@ public class BowlingGamePresenter : IPlayerObserver
 
     private bool CheckIfLegalPinsAmount(int pinsAmount)
     {
-        if(pinsAmount < 0)
+        if (pinsAmount < 0)
         {
             return false;
         }
         int pinsRemaining = 0;
         Turn playerCurrentTurn = CurrentPlayer.CurrentTurn();
-        if (CurrentPlayer.Turns[Turn.LAST_TURN_INDEX]== playerCurrentTurn)
+        if (CurrentPlayer.IsLastTurn())
         {
-            if (playerCurrentTurn.GetEveryThrowMade().Count==0)
-            {
-                pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.TotalPinsThrown();
-            }
-            else if (playerCurrentTurn.GetEveryThrowMade().Count==1)
-            {
-                if (playerCurrentTurn.PinsThrownOn(0)==10)
-                {
-                    pinsRemaining = Turn.MAX_PINS;
-                }
-                else
-                {
-                    pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.TotalPinsThrown();
-                }
-            }
-            else if (playerCurrentTurn.GetEveryThrowMade().Count==2)
-            {
-                if (playerCurrentTurn.PinsThrownOn(1)==Turn.MAX_PINS||playerCurrentTurn.PinsThrownOn(0)+playerCurrentTurn.PinsThrownOn(1)==Turn.MAX_PINS)
-                {
-                    pinsRemaining = Turn.MAX_PINS;
-                }
-                else
-                {
-                    pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.PinsThrownOn(1);
-                }
-            }
+            pinsRemaining=CalculatePinsRemainingForLastTurnThrows(pinsRemaining, playerCurrentTurn);
         }
         else
         {
             pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.TotalPinsThrown();
         }
+        return ThrowIsLegal(pinsAmount, pinsRemaining);
+    }
+
+    private int CalculatePinsRemainingForLastTurnThrows(int pinsRemaining, Turn playerCurrentTurn)
+    {
+        if (LastTurnHasNoThrowsYet(playerCurrentTurn))
+        {
+            pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.TotalPinsThrown();
+        }
+        else if (LastTurnHasOneThrowMade(playerCurrentTurn))
+        {
+            if (LastTurnHasStrikeOnFirstThrow(playerCurrentTurn))
+            {
+                pinsRemaining = Turn.MAX_PINS;
+            }
+            else
+            {
+                pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.TotalPinsThrown();
+            }
+        }
+        else if (LastTurnHasTwoShotsMade(playerCurrentTurn))
+        {
+            if (LastTurnHasAstrikeOrAspareBeforeLastShot(playerCurrentTurn))
+            {
+                pinsRemaining = Turn.MAX_PINS;
+            }
+            else
+            {
+                pinsRemaining = Turn.MAX_PINS - playerCurrentTurn.PinsThrownOn(1);
+            }
+        }
+
+        return pinsRemaining;
+    }
+
+    private bool ThrowIsLegal(int pinsAmount, int pinsRemaining)
+    {
         return pinsAmount <= pinsRemaining && pinsAmount <= Turn.MAX_PINS;
+    }
+
+    private bool LastTurnHasAstrikeOrAspareBeforeLastShot(Turn playerCurrentTurn)
+    {
+        return playerCurrentTurn.PinsThrownOn(1)==Turn.MAX_PINS||playerCurrentTurn.PinsThrownOn(0)+playerCurrentTurn.PinsThrownOn(1)==Turn.MAX_PINS;
+    }
+
+    private bool LastTurnHasTwoShotsMade(Turn playerCurrentTurn)
+    {
+        return playerCurrentTurn.GetEveryThrowMade().Count==2;
+    }
+
+    private bool LastTurnHasStrikeOnFirstThrow(Turn playerCurrentTurn)
+    {
+        return playerCurrentTurn.PinsThrownOn(0)==Turn.MAX_PINS;
+    }
+
+    private bool LastTurnHasOneThrowMade(Turn playerCurrentTurn)
+    {
+        return playerCurrentTurn.GetEveryThrowMade().Count==1;
+    }
+
+    private bool LastTurnHasNoThrowsYet(Turn playerCurrentTurn)
+    {
+        return playerCurrentTurn.GetEveryThrowMade().Count==0;
     }
 
     private void UpdatePlayerForNextTurn()

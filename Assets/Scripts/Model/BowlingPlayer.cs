@@ -75,4 +75,9 @@ public class BowlingPlayer : IBowlingPlayer
         }
         return Turns[currentTurnIndex];
     }
+
+    public bool IsLastTurn()
+    {
+        return Turns[Turn.LAST_TURN_INDEX]== CurrentTurn();
+    }
 }
