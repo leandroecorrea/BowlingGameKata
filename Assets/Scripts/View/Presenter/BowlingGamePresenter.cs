@@ -106,113 +106,127 @@ public class BowlingGamePresenter : IPlayerObserver
             TurnViewDetail turnViewDetail = _gameView.GetPlayerTurnViewDetailFor(currentPlayerIndex, turnIndex);
             if (turnIndex==Turn.LAST_TURN_INDEX)
             {
-                try
-                {
-                    accumulatedScore +=turn.PinsThrownOn(0);
-
-                    string throwValue;
-                    if (turn.PinsThrownOn(0)==Turn.MAX_PINS)
-                    {
-                        throwValue = "X";
-                    }
-                    else
-                    {
-                        throwValue = turn.PinsThrownOn(0).ToString();
-                    }
-                    turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = throwValue;
-                    accumulatedScore +=turn.PinsThrownOn(1);
-                    if (turn.PinsThrownOn(1)==Turn.MAX_PINS)
-                    {
-                        throwValue = "X";
-                    }
-                    else if (turn.PinsThrownOn(1)+turn.PinsThrownOn(0)==Turn.MAX_PINS)
-                    {
-                        throwValue = "-";
-                    }
-                    else
-                    {
-                        throwValue = turn.PinsThrownOn(1).ToString();
-                    }
-                    turnViewDetail.SecondThrow.GetComponentInChildren<Text>().text = throwValue;
-                    accumulatedScore +=turn.PinsThrownOn(2);
-                    if (turn.PinsThrownOn(2)==Turn.MAX_PINS)
-                    {
-                        throwValue = "X";
-                    }
-                    else if (turn.PinsThrownOn(2)+turn.PinsThrownOn(1)==Turn.MAX_PINS&&turn.PinsThrownOn(0)+turn.PinsThrownOn(1)!=Turn.MAX_PINS)
-                    {
-                        throwValue = "-";
-                    }
-                    else
-                    {
-                        throwValue = turn.PinsThrownOn(2).ToString();
-                    }
-
-                    turnViewDetail.ThirdThrow.GetComponentInChildren<Text>().text = throwValue;
-                    turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
-                }
-                catch (Exception)
-                {
-                    Debug.Log("Last Turn not finished yet.");
-                }
+                accumulatedScore=RenderLastTurn(accumulatedScore, turn, turnViewDetail);
             }
             else
             {
-                switch (turn.Status)
-                {
-                    case TurnStatusEnum.ONGOING:
-                        turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(0).ToString();
-                        break;
-                    case TurnStatusEnum.NORMAL:
-                        turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(0).ToString();
-                        turnViewDetail.SecondThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(1).ToString();
-                        accumulatedScore += turn.TotalPinsThrown();
-                        turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
-                        break;
-                    case TurnStatusEnum.SPARE:
-                        turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(0).ToString();
-                        turnViewDetail.SecondThrow.GetComponentInChildren<Text>().text = "-";
-                        if (turnIndex + 1 < turnsToBeRendered.Count)
-                        {
-                            Turn nextTurn = turnsToBeRendered[turnIndex + 1];
-                            accumulatedScore += (nextTurn.PinsThrownOn(0) + 10);
-                            turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
-                        }
-                        break;
-                    case TurnStatusEnum.STRIKE:
-                        turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = "";
-                        turnViewDetail.SecondThrow.GetComponentInChildren<Text>().text = "X";
-                        if (turnIndex + 1 < turnsToBeRendered.Count)
-                        {
-                            Turn nextTurn = turnsToBeRendered[turnIndex + 1];
-                            if (nextTurn.Status == TurnStatusEnum.STRIKE)
-                            {
-                                if (turnIndex + 2 < turnsToBeRendered.Count)
-                                {
-                                    Turn nextNextTurn = turnsToBeRendered[turnIndex + 1];
-                                    accumulatedScore += (nextNextTurn.TotalPinsThrown() + 20);
-                                    turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
-                                }
-                                else if(nextTurn.GetEveryThrowMade().Count>=2)
-                                {
-                                    accumulatedScore += (nextTurn.PinsThrownOn(0)+nextTurn.PinsThrownOn(1));
-                                    turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
-                                }
-                            }
-                            else
-                            {
-                                accumulatedScore += (nextTurn.TotalPinsThrown() + 10);
-                                turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
-                            }
-
-                        }
-                        break;
-                }
+                accumulatedScore=RenderNormalTurn(turnsToBeRendered, accumulatedScore, turnIndex, turn, turnViewDetail);
             }
-            
+
         }
         _gameView.SetFinalScoreForPlayer(currentPlayerIndex, accumulatedScore);
         playersScore[currentPlayerIndex] = accumulatedScore;
+    }
+
+    private int RenderNormalTurn(List<Turn> turnsToBeRendered, int accumulatedScore, int turnIndex, Turn turn, TurnViewDetail turnViewDetail)
+    {
+        switch (turn.Status)
+        {
+            case TurnStatusEnum.ONGOING:
+                turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(0).ToString();
+                break;
+            case TurnStatusEnum.NORMAL:
+                turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(0).ToString();
+                turnViewDetail.SecondThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(1).ToString();
+                accumulatedScore += turn.TotalPinsThrown();
+                turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
+                break;
+            case TurnStatusEnum.SPARE:
+                turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = turn.PinsThrownOn(0).ToString();
+                turnViewDetail.SecondThrow.GetComponentInChildren<Text>().text = "-";
+                if (turnIndex + 1 < turnsToBeRendered.Count)
+                {
+                    Turn nextTurn = turnsToBeRendered[turnIndex + 1];
+                    accumulatedScore += (nextTurn.PinsThrownOn(0) + 10);
+                    turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
+                }
+                break;
+            case TurnStatusEnum.STRIKE:
+                turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = "";
+                turnViewDetail.SecondThrow.GetComponentInChildren<Text>().text = "X";
+                if (turnIndex + 1 < turnsToBeRendered.Count)
+                {
+                    Turn nextTurn = turnsToBeRendered[turnIndex + 1];
+                    if (nextTurn.Status == TurnStatusEnum.STRIKE)
+                    {
+                        if (turnIndex + 2 < turnsToBeRendered.Count)
+                        {
+                            Turn nextNextTurn = turnsToBeRendered[turnIndex + 1];
+                            accumulatedScore += (nextNextTurn.TotalPinsThrown() + 20);
+                            turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
+                        }
+                        else if (nextTurn.GetEveryThrowMade().Count>=2)
+                        {
+                            accumulatedScore += (nextTurn.PinsThrownOn(0)+nextTurn.PinsThrownOn(1));
+                            turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
+                        }
+                    }
+                    else if(nextTurn.Status != TurnStatusEnum.STANDBY &&nextTurn.Status != TurnStatusEnum.ONGOING)
+                    {
+                        accumulatedScore += (nextTurn.TotalPinsThrown() + 10);
+                        turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
+                    }
+
+                }
+                break;
+        }
+
+        return accumulatedScore;
+    }
+
+    private int RenderLastTurn(int accumulatedScore, Turn turn, TurnViewDetail turnViewDetail)
+    {
+        try
+        {
+            accumulatedScore +=turn.PinsThrownOn(0);
+
+            string throwValue;
+            if (turn.PinsThrownOn(0)==Turn.MAX_PINS)
+            {
+                throwValue = "X";
+            }
+            else
+            {
+                throwValue = turn.PinsThrownOn(0).ToString();
+            }
+            turnViewDetail.FirstThrow.GetComponentInChildren<Text>().text = throwValue;
+            accumulatedScore +=turn.PinsThrownOn(1);
+            if (turn.PinsThrownOn(1)==Turn.MAX_PINS)
+            {
+                throwValue = "X";
+            }
+            else if (turn.PinsThrownOn(1)+turn.PinsThrownOn(0)==Turn.MAX_PINS)
+            {
+                throwValue = "-";
+            }
+            else
+            {
+                throwValue = turn.PinsThrownOn(1).ToString();
+            }
+            turnViewDetail.SecondThrow.GetComponentInChildren<Text>().text = throwValue;
+            accumulatedScore +=turn.PinsThrownOn(2);
+            if (turn.PinsThrownOn(2)==Turn.MAX_PINS)
+            {
+                throwValue = "X";
+            }
+            else if (turn.PinsThrownOn(2)+turn.PinsThrownOn(1)==Turn.MAX_PINS&&turn.PinsThrownOn(0)+turn.PinsThrownOn(1)!=Turn.MAX_PINS)
+            {
+                throwValue = "-";
+            }
+            else
+            {
+                throwValue = turn.PinsThrownOn(2).ToString();
+            }
+
+            turnViewDetail.ThirdThrow.GetComponentInChildren<Text>().text = throwValue;
+            turnViewDetail.FinalTurnScore.GetComponent<Text>().text = accumulatedScore.ToString();
+        }
+        catch (Exception)
+        {
+            Debug.Log("Last Turn not finished yet.");
+        }
+
+        return accumulatedScore;
     }
 
     private string GameEndedResultMessage()
